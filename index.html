@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>搜索</title>
+    <script src="http://libs.baidu.com/jquery/2.0.0/jquery.min.js"></script>
+    <style>
+     * {
+         margin: 0px;
+         padding: 0px;
+     }
+
+     .tab-box {
+         width: 100%;
+     }
+
+     .tab-box ul {
+         list-style-type: none;
+     }
+
+     .tab-box li {
+         float: left;
+         width: 60px;
+         background: #ccc;
+         color: #666;
+         height: 25px;
+         line-height: 25px;
+         text-align: center;
+         cursor: pointer;
+         margin-right: 1px;
+         font-weight: bold;
+     }
+
+     .tab-box li.active {
+         background: #999;
+         color: #fff;
+     }
+
+     .tab-content {
+         width: 100%;
+     }
+
+     .tab-content div {
+         width: 100%;
+         height: 100%;
+         clear: left;
+         display: none;
+     }
+
+     .tab-box div.active-txt {
+         display: block;
+     }
+    </style>
+</head>
+<body>
+    <div style="width: 100%; height: 30px;">
+        <input style="width: 100%; height: 100%; border: 0px;" placeholder=" query">
+    </div>
+    <div class="main-tab">
+        <div class="tab-box">
+            <ul>
+            </ul>
+            <div class="tab-content">
+            </div>
+        </div>
+    </div>
+</body>
+<script>
+$(function() {
+
+    var engines = [
+      { 'name': '百度', 'url':  'https://www.baidu.com/s?wd={word}' },
+      { 'name': '知乎', 'url':  'https://www.zhihu.com/search?type=content&q={word}' },
+      { 'name': 'b站',  'url':  'https://search.bilibili.com/all?keyword={word}' },
+      { 'name': '点评', 'url':  'https://www.dianping.com/search/keyword/7/0_{word}' },
+      { 'name': '抖音', 'url':  'https://www.douyin.com/search/{word}' },
+      { 'name': '地图', 'url':  'https://www.amap.com/search?query={word}' },
+      { 'name': 'magi', 'url':  'https://magi.com/search?q={word}' },
+      { 'name': '百指', 'url':  'https://index.baidu.com/v2/main/index.html#/trend/{word}?words={word}' },
+      { 'name': '微博', 'url':  'https://s.weibo.com/weibo/{word}' },
+      { 'name': '公众号', 'url':  'https://weixin.sogou.com/weixin?query={word}&type=2' },
+    ];
+
+    $.each(engines, function (i, e) {
+      $('.tab-box ul').append('<li>' + e.name + '</li>');
+      $('.tab-content').append('<div class="active-txt"><iframe style="width: 100%; height: 100%;" src="" frameborder="0"></iframe></div>');
+    });
+
+    $('.tab-content').height(screen.availHeight - 150);
+    $(".tab-box li").each(function(index) {
+      $(this).mouseover(function() {
+        $("li.active").removeClass("active"); //注意这里
+        $(this).addClass("active"); //注意这里
+        $(".tab-content div.active-txt").removeClass("active-txt");
+        $(".tab-content div").eq(index).addClass("active-txt");
+      });
+    });
+
+    var query_timer = null;
+    var iframes = $('iframe');
+    var $tabs = $('.tab-box ul').find('li');
+    var $input = $('input');
+
+    $input.focus();
+    $input.bind('input propertychange', function() {
+      if (query_timer != null) {
+        clearTimeout(query_timer);
+      }
+      query_timer = setTimeout(function () {
+        $.each(engines, function (i, e) {
+          var url = e.url.split('{word}').join(encodeURI($input.val()));
+          $(iframes[i]).attr('src', url);
+          $($tabs[i]).html('<a href="' +url+ '">' +e.name+ '</a>');
+        });
+      }, 1000);
+    });
+});
+</script>
+</html>
