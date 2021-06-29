@@ -97,7 +97,7 @@ $(function() {
     });
 
     var query_timer = null;
-    var iframes = $('iframe');
+    var $iframes = $('iframe');
     var $tabs = $('.tab-box ul').find('li');
     var $input = $('input');
 
@@ -109,7 +109,7 @@ $(function() {
       query_timer = setTimeout(function () {
         $.each(engines, function (i, e) {
           var url = e.url.split('{word}').join(encodeURI($input.val()));
-          $(iframes[i]).attr('src', url);
+          $($iframes[i]).attr('src', url);
           $($tabs[i]).html('<a href="' +url+ '">' +e.name+ '</a>');
         });
       }, 1000);
